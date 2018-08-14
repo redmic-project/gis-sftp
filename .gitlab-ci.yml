@@ -1,0 +1,45 @@
+image: docker:stable
+
+stages:
+  - deploy
+
+deploy-dev:
+  stage: deploy
+  image: registry.gitlab.com/redmic-project/docker/docker-deploy:latest
+  variables:
+    DOCKER_DRIVER: overlay2
+    SSH_REMOTE: ${DEV_SSH_REMOTE}
+    SERVICE: ${CI_PROJECT_NAME}
+    COMPOSE_FILE: docker-compose.tmpl.yml:docker-compose.dev.yml
+    SFTP_USERS: ${DEV_SFTP_USERS}
+  services:
+    - docker:dind
+  script:
+    - >
+      deploy.sh COMPOSE_FILE=${COMPOSE_FILE} SFTP_USERS=${SFTP_USERS}
+  environment:
+    name: dev
+  only:
+    - branches
+  when: manual
+
+
+deploy-pro:
+  stage: deploy
+  image: registry.gitlab.com/redmic-project/docker/docker-deploy:latest
+  variables:
+    DOCKER_DRIVER: overlay2
+    SSH_REMOTE: ${PRO_SSH_REMOTE}
+    SERVICE: ${CI_PROJECT_NAME}
+    COMPOSE_FILE: docker-compose.tmpl.yml:docker-compose.prod.yml
+    SFTP_USERS: ${PRO_SFTP_USERS}
+  services:
+    - docker:dind
+  script:
+    - >
+      deploy.sh COMPOSE_FILE=${COMPOSE_FILE} SFTP_USERS=${SFTP_USERS}
+  environment:
+    name: master
+  only:
+    - branches
+  when: manual
