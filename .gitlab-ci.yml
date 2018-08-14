@@ -38,6 +38,7 @@ deploy-pro:
   script:
     - >
       deploy.sh COMPOSE_FILE=${COMPOSE_FILE} SFTP_USERS=${SFTP_USERS}
+      PUBLIC_HOSTNAME=${PRO_PUBLIC_HOSTNAME}
   environment:
     name: master
   only:
