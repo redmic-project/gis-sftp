@@ -3,6 +3,8 @@ version: '3.5'
 services:
   sftp:
     image: atmoz/sftp:alpine
+    ports:
+      - "${PORT}:22"
     volumes:
         - geoserver-vol:/home/geoserver/geoserver
     command: "${SFTP_USERS}"
