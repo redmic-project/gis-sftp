@@ -4,5 +4,5 @@ services:
   sftp:
     image: atmoz/sftp:alpine
     volumes:
-        - geoserver-vol:/mnt/geoserver
+        - geoserver-vol:/home/geoserver/data
     command: "${SFTP_USERS}"
