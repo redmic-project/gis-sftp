@@ -5,7 +5,7 @@ services:
     image: atmoz/sftp:alpine
     container_name: sftp
     ports:
-       - ${PORT}:22
+       - "${PORT}:22"
     restart: on-failure:3
 
 volumes:

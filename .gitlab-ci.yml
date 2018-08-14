@@ -41,5 +41,5 @@ deploy-pro:
   environment:
     name: master
   only:
-    - branches
+    - master
   when: manual
