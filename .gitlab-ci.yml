@@ -12,17 +12,22 @@ deploy-dev:
     SERVICE: ${CI_PROJECT_NAME}
     COMPOSE_FILE: docker-compose.tmpl.yml:docker-compose.dev.yml
     SFTP_USERS: ${DEV_SFTP_USERS}
+    PUBLIC_HOSTNAME: ${DEV_PUBLIC_HOSTNAME}
+    PUBLIC_PORT: ${DEV_PUBLIC_PORT}
   services:
     - docker:dind
   script:
     - >
       deploy.sh COMPOSE_FILE=${COMPOSE_FILE} SFTP_USERS=${SFTP_USERS}
+      PUBLIC_PORT=${PUBLIC_PORT}
   environment:
     name: dev
+    url: sftp://${PUBLIC_HOSTNAME}:${PUBLIC_PORT}
   only:
     - branches
+  except:
+    - master
   when: manual
-
 
 deploy-pro:
   stage: deploy
@@ -30,17 +35,21 @@ deploy-pro:
   variables:
     DOCKER_DRIVER: overlay2
     SSH_REMOTE: ${PRO_SSH_REMOTE}
-    SERVICE: ${CI_PROJECT_NAME}
+    STACK: gis
+    SERVICES_TO_CHECK: gis_${CI_PROJECT_NAME}
     COMPOSE_FILE: docker-compose.tmpl.yml:docker-compose.prod.yml
     SFTP_USERS: ${PRO_SFTP_USERS}
+    PUBLIC_HOSTNAME: ${PRO_PUBLIC_HOSTNAME}
+    PUBLIC_PORT: ${PRO_PUBLIC_PORT}
   services:
     - docker:dind
   script:
     - >
       deploy.sh COMPOSE_FILE=${COMPOSE_FILE} SFTP_USERS=${SFTP_USERS}
-      PUBLIC_HOSTNAME=${PRO_PUBLIC_HOSTNAME}
+      PUBLIC_PORT=${PUBLIC_PORT}
   environment:
-    name: master
+    name: pro
+    url: sftp://${PUBLIC_HOSTNAME}:${PUBLIC_PORT}
   only:
     - master
   when: manual
