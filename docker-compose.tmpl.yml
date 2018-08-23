@@ -3,8 +3,14 @@ version: '3.5'
 services:
   sftp:
     image: atmoz/sftp:alpine
+    command: "${SFTP_USERS}"
+    networks:
+      - gis-net
     ports:
       - "${PUBLIC_PORT}:22"
     volumes:
         - geoserver-vol:/home/geoserver/geoserver
-    command: "${SFTP_USERS}"
+
+networks:
+  gis-net:
+    external: true
