@@ -7,7 +7,9 @@ services:
     networks:
       - gis-net
     ports:
-      - "${PUBLIC_PORT}:22"
+      - target: 22
+        published: ${PUBLIC_PORT}
+        mode: host
     volumes:
         - geoserver-vol:/home/geoserver/geoserver
 
