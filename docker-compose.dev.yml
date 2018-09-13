@@ -2,10 +2,18 @@ version: '3.5'
 
 services:
   sftp:
-    image: atmoz/sftp:alpine
-    container_name: sftp
-    restart: on-failure:3
-
+    deploy:
+      mode: replicated
+      replicas: 1
+      restart_policy:
+        delay: 30s
+        window: 1m
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 8M
+        reservations:
+          memory: 7M
 volumes:
   geoserver-vol:
     name: geoserver-vol
