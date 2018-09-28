@@ -14,9 +14,9 @@ services:
       resources:
         limits:
           cpus: '0.5'
-          memory: 8M
+          memory: 64M
         reservations:
-          memory: 7M
+          memory: 52M
 
 volumes:
   geoserver-vol:
