@@ -1,19 +1,5 @@
 version: '3.5'
 
-services:
-  sftp:
-    deploy:
-      mode: replicated
-      replicas: 1
-      restart_policy:
-        delay: 30s
-        window: 1m
-      resources:
-        limits:
-          cpus: '0.5'
-          memory: 64M
-        reservations:
-          memory: 52M
 volumes:
   geoserver-vol:
     name: geoserver-vol
