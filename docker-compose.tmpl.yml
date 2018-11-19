@@ -3,8 +3,13 @@ version: '3.5'
 services:
   sftp:
     image: atmoz/sftp:alpine
+    command: "${SFTP_USERS}"
+    networks:
+      - gis-net
     ports:
-      - "${PORT}:22"
+      - target: 22
+        published: ${PUBLIC_PORT}
+        mode: host
     volumes:
         - geoserver-vol:/home/geoserver/geoserver
     command: "${SFTP_USERS}"
@@ -15,5 +20,15 @@ services:
         constraints:
           - node.role == manager
       restart_policy:
-        condition: on-failure
-        max_attempts: 3
+        delay: 30s
+        window: 1m
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 64M
+        reservations:
+          memory: 52M
+
+networks:
+  gis-net:
+    external: true

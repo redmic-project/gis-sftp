@@ -1,12 +1,5 @@
 version: '3.5'
 
-services:
-  sftp:
-    deploy:
-      placement:
-        constraints:
-          - node.role == manager
-
 volumes:
   geoserver-vol:
     name: geoserver-maxio-vol

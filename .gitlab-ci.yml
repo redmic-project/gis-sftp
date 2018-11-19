@@ -1,46 +1,67 @@
-image: docker:stable
+image: registry.gitlab.com/redmic-project/docker/docker-deploy:latest
 
 stages:
   - deploy
 
+variables:
+  DOCKER_DRIVER: overlay2
+
+services:
+  - docker:dind
+
 deploy-dev:
   stage: deploy
-  image: registry.gitlab.com/redmic-project/docker/docker-deploy:latest
   variables:
-    DOCKER_DRIVER: overlay2
     SSH_REMOTE: ${DEV_SSH_REMOTE}
-    SERVICE: ${CI_PROJECT_NAME}
+    STACK: gis
+    SERVICES_TO_CHECK: gis_${CI_PROJECT_NAME}
     COMPOSE_FILE: docker-compose.tmpl.yml:docker-compose.dev.yml
     SFTP_USERS: ${DEV_SFTP_USERS}
-  services:
-    - docker:dind
+    PUBLIC_PORT: ${DEV_PUBLIC_PORT}
   script:
     - >
-      deploy.sh COMPOSE_FILE=${COMPOSE_FILE} SFTP_USERS=${SFTP_USERS}
+      deploy.sh COMPOSE_FILE=${COMPOSE_FILE} SFTP_USERS=${SFTP_USERS} PUBLIC_PORT=${PUBLIC_PORT}
+  environment:
+    name: dev
+  only:
+    - dev
+  when: manual
+
+deploy-supporting-branch:
+  stage: deploy
+  variables:
+    SSH_REMOTE: ${DEV_SSH_REMOTE}
+    STACK: gis
+    SERVICES_TO_CHECK: gis_${CI_PROJECT_NAME}
+    COMPOSE_FILE: docker-compose.tmpl.yml:docker-compose.dev.yml
+    SFTP_USERS: ${DEV_SFTP_USERS}
+    PUBLIC_PORT: ${DEV_PUBLIC_PORT}
+  script:
+    - >
+      deploy.sh COMPOSE_FILE=${COMPOSE_FILE} SFTP_USERS=${SFTP_USERS} PUBLIC_PORT=${PUBLIC_PORT}
   environment:
     name: dev
   only:
     - branches
+  except:
+    - master
+    - dev
   when: manual
-
 
 deploy-pro:
   stage: deploy
-  image: registry.gitlab.com/redmic-project/docker/docker-deploy:latest
   variables:
-    DOCKER_DRIVER: overlay2
     SSH_REMOTE: ${PRO_SSH_REMOTE}
-    SERVICE: ${CI_PROJECT_NAME}
+    STACK: gis
+    SERVICES_TO_CHECK: gis_${CI_PROJECT_NAME}
     COMPOSE_FILE: docker-compose.tmpl.yml:docker-compose.prod.yml
     SFTP_USERS: ${PRO_SFTP_USERS}
-  services:
-    - docker:dind
+    PUBLIC_PORT: ${PRO_PUBLIC_PORT}
   script:
     - >
-      deploy.sh COMPOSE_FILE=${COMPOSE_FILE} SFTP_USERS=${SFTP_USERS}
-      PUBLIC_HOSTNAME=${PRO_PUBLIC_HOSTNAME}
+      deploy.sh COMPOSE_FILE=${COMPOSE_FILE} SFTP_USERS=${SFTP_USERS} PUBLIC_PORT=${PUBLIC_PORT}
   environment:
-    name: master
+    name: pro
   only:
     - master
   when: manual
