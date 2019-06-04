@@ -2,7 +2,7 @@ version: '3.5'
 
 services:
   sftp:
-    image: atmoz/sftp:alpine
+    image: ${IMAGE_NAME}:${IMAGE_TAG}
     command: "${SFTP_USERS}"
     networks:
       - gis-net
@@ -27,6 +27,7 @@ services:
           cpus: '0.5'
           memory: 64M
         reservations:
+          cpus: '0.01'
           memory: 52M
 
 networks:

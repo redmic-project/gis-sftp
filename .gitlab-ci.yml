@@ -1,67 +1,14 @@
-image: registry.gitlab.com/redmic-project/docker/docker-deploy:latest
+include:
+  - project: 'redmic-project/gitlab-ci-templates'
+    ref: master
+    file: '/deployment.yml'
 
 stages:
   - deploy
 
 variables:
-  DOCKER_DRIVER: overlay2
-
-services:
-  - docker:dind
-
-deploy-dev:
-  stage: deploy
-  variables:
-    SSH_REMOTE: ${DEV_SSH_REMOTE}
-    STACK: gis
-    SERVICES_TO_CHECK: gis_${CI_PROJECT_NAME}
-    COMPOSE_FILE: docker-compose.tmpl.yml:docker-compose.dev.yml
-    SFTP_USERS: ${DEV_SFTP_USERS}
-    PUBLIC_PORT: ${DEV_PUBLIC_PORT}
-  script:
-    - >
-      deploy.sh COMPOSE_FILE=${COMPOSE_FILE} SFTP_USERS=${SFTP_USERS} PUBLIC_PORT=${PUBLIC_PORT}
-  environment:
-    name: dev
-  only:
-    - dev
-  when: manual
-
-deploy-supporting-branch:
-  stage: deploy
-  variables:
-    SSH_REMOTE: ${DEV_SSH_REMOTE}
-    STACK: gis
-    SERVICES_TO_CHECK: gis_${CI_PROJECT_NAME}
-    COMPOSE_FILE: docker-compose.tmpl.yml:docker-compose.dev.yml
-    SFTP_USERS: ${DEV_SFTP_USERS}
-    PUBLIC_PORT: ${DEV_PUBLIC_PORT}
-  script:
-    - >
-      deploy.sh COMPOSE_FILE=${COMPOSE_FILE} SFTP_USERS=${SFTP_USERS} PUBLIC_PORT=${PUBLIC_PORT}
-  environment:
-    name: dev
-  only:
-    - branches
-  except:
-    - master
-    - dev
-  when: manual
-
-deploy-pro:
-  stage: deploy
-  variables:
-    SSH_REMOTE: ${PRO_SSH_REMOTE}
-    STACK: gis
-    SERVICES_TO_CHECK: gis_${CI_PROJECT_NAME}
-    COMPOSE_FILE: docker-compose.tmpl.yml:docker-compose.prod.yml
-    SFTP_USERS: ${PRO_SFTP_USERS}
-    PUBLIC_PORT: ${PRO_PUBLIC_PORT}
-  script:
-    - >
-      deploy.sh COMPOSE_FILE=${COMPOSE_FILE} SFTP_USERS=${SFTP_USERS} PUBLIC_PORT=${PUBLIC_PORT}
-  environment:
-    name: pro
-  only:
-    - master
-  when: manual
+  STACK: gis
+  IMAGE_NAME: atmoz/sftp
+  IMAGE_TAG: alpine
+  SFTP_USERS: ${SFTP_USERS}
+  PUBLIC_PORT: ${PUBLIC_PORT}
