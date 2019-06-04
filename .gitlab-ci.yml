@@ -10,5 +10,9 @@ variables:
   STACK: gis
   IMAGE_NAME: atmoz/sftp
   IMAGE_TAG: alpine
-  SFTP_USERS: ${SFTP_USERS}
-  PUBLIC_PORT: ${PUBLIC_PORT}
+
+.deploy:
+  script:
+    - >
+      deploy.sh IMAGE_NAME=${IMAGE_NAME} IMAGE_TAG=${IMAGE_TAG}
+      SFTP_USERS=${SFTP_USERS} PUBLIC_PORT=${PUBLIC_PORT}
